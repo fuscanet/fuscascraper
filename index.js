@@ -10,12 +10,15 @@ app.get("/scrap", async (req, res) => {
 
   let browser;
   try {
-browser = await puppeteer.launch({
-  args: chromium.args,
-  defaultViewport: chromium.defaultViewport,
-  executablePath: await chromium.executablePath,
-  headless: chromium.headless
-});
+    const executablePath = await chromium.executablePath;
+    if (!executablePath) throw new Error("Chromium executable path not found.");
+
+    browser = await puppeteer.launch({
+      args: chromium.args,
+      defaultViewport: chromium.defaultViewport,
+      executablePath: executablePath,
+      headless: chromium.headless
+    });
 
     const page = await browser.newPage();
     await page.setUserAgent(
