@@ -1,7 +1,5 @@
 const express = require("express");
-const chromium = require("chrome-aws-lambda");
-const puppeteer = require("puppeteer-core");
-
+const puppeteer = require("puppeteer");
 const app = express();
 
 app.get("/scrap", async (req, res) => {
@@ -10,14 +8,8 @@ app.get("/scrap", async (req, res) => {
 
   let browser;
   try {
-    const executablePath = await chromium.executablePath;
-    if (!executablePath) throw new Error("Chromium executable path not found.");
-
     browser = await puppeteer.launch({
-      args: chromium.args,
-      defaultViewport: chromium.defaultViewport,
-      executablePath: executablePath,
-      headless: chromium.headless
+      args: ["--no-sandbox", "--disable-setuid-sandbox"]
     });
 
     const page = await browser.newPage();
