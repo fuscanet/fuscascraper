@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: fuscascraper
+    env: node
+    plan: free
+    buildCommand: npm install --legacy-peer-deps && npm rebuild puppeteer
+    startCommand: node index.js
+    envVars:
+      - key: PUPPETEER_SKIP_CHROMIUM_DOWNLOAD
+        value: "false"
+    autoDeploy: true
