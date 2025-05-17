@@ -1,6 +1,7 @@
 const express = require("express");
 const chromium = require("chrome-aws-lambda");
 const puppeteer = require("puppeteer-core");
+
 const app = express();
 
 app.get("/scrap", async (req, res) => {
@@ -9,12 +10,13 @@ app.get("/scrap", async (req, res) => {
 
   let browser;
   try {
-browser = await puppeteer.launch({
-  args: chromium.args,
-  defaultViewport: chromium.defaultViewport,
-  executablePath: await chromium.executablePath,
-  headless: chromium.headless
-});
+    browser = await puppeteer.launch({
+      args: chromium.args,
+      defaultViewport: chromium.defaultViewport,
+      executablePath: await chromium.executablePath || "/usr/bin/chromium-browser",
+      headless: chromium.headless
+    });
+
     const page = await browser.newPage();
     await page.setUserAgent(
       "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
@@ -23,7 +25,6 @@ browser = await puppeteer.launch({
 
     const resultado = await page.evaluate(() => {
       const limpiar = (texto) => texto?.replace(/\n|\t|\r/g, "").trim();
-
       const precio = document.querySelector(".skuBestPrice, .skuPrice, .price-tag-fraction");
       const precioPix = document.querySelector(".skuPriceWithDiscount, .price-tag-cents");
       const agotado = document.body.innerText.includes("produto esgotado") ||
